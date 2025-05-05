@@ -7,6 +7,7 @@ import (
 	"golang.org/x/sys/windows"
 )
 
+// CreateOcrInitOptions creates and returns a handle to OCR initialization options.
 func CreateOcrInitOptions() uintptr {
 	var handle uintptr
 	proc := oneocr.NewProc("CreateOcrInitOptions")
@@ -16,6 +17,7 @@ func CreateOcrInitOptions() uintptr {
 	return handle
 }
 
+// OcrInitOptionsSetUseModelDelayLoad enables or disables lazy loading of the OCR model.
 func OcrInitOptionsSetUseModelDelayLoad(initOpts uintptr, enable bool) {
 	enabled := 0
 	if enable {
@@ -28,6 +30,7 @@ func OcrInitOptionsSetUseModelDelayLoad(initOpts uintptr, enable bool) {
 	)
 }
 
+// CreateOcrPipeline creates and returns a handle to OCR pipeline.
 func CreateOcrPipeline(initOpts uintptr, modelPath, modelKey string) uintptr {
 	var handle uintptr
 	modelPathPtr, _ := windows.BytePtrFromString(modelPath)
@@ -42,6 +45,7 @@ func CreateOcrPipeline(initOpts uintptr, modelPath, modelKey string) uintptr {
 	return handle
 }
 
+// CreateOcrProcessOptions creates and returns a handle to OCR processing options.
 func CreateOcrProcessOptions() uintptr {
 	var handle uintptr
 	proc := oneocr.NewProc("CreateOcrProcessOptions")
@@ -51,6 +55,7 @@ func CreateOcrProcessOptions() uintptr {
 	return handle
 }
 
+// OcrProcessOptionsGetMaxRecognitionLineCount returns the maximum number of text lines
 func OcrProcessOptionsGetMaxRecognitionLineCount(processOpts uintptr) int {
 	var count int
 	proc := oneocr.NewProc("OcrProcessOptionsGetMaxRecognitionLineCount")
@@ -61,6 +66,7 @@ func OcrProcessOptionsGetMaxRecognitionLineCount(processOpts uintptr) int {
 	return count
 }
 
+// OcrProcessOptionsSetMaxRecognitionLineCount sets the maximum number of text lines
 func OcrProcessOptionsSetMaxRecognitionLineCount(processOpts uintptr, count int) {
 	proc := oneocr.NewProc("OcrProcessOptionsSetMaxRecognitionLineCount")
 	proc.Call(
@@ -69,6 +75,7 @@ func OcrProcessOptionsSetMaxRecognitionLineCount(processOpts uintptr, count int)
 	)
 }
 
+// OcrProcessOptionsGetResizeResolution returns the current width and height settings
 func OcrProcessOptionsGetResizeResolution(processOpts uintptr) (int, int) {
 	var width, height int
 	proc := oneocr.NewProc("OcrProcessOptionsGetResizeResolution")
@@ -80,6 +87,7 @@ func OcrProcessOptionsGetResizeResolution(processOpts uintptr) (int, int) {
 	return width, height
 }
 
+// OcrProcessOptionsSetResizeResolution sets the resolution that images will be resized to
 func OcrProcessOptionsSetResizeResolution(processOpts uintptr, width int, height int) {
 	proc := oneocr.NewProc("OcrProcessOptionsSetResizeResolution")
 	proc.Call(
@@ -89,6 +97,8 @@ func OcrProcessOptionsSetResizeResolution(processOpts uintptr, width int, height
 	)
 }
 
+// RunOcrPipeline executes the OCR pipeline on the provided image with the specified
+// processing options. Returns a handle to the recognition results.
 func RunOcrPipeline(pipeline, processOpts uintptr, img *Image) (uintptr, error) {
 	var (
 		result uintptr
@@ -107,6 +117,7 @@ func RunOcrPipeline(pipeline, processOpts uintptr, img *Image) (uintptr, error) 
 	return result, err
 }
 
+// GetImageAngle returns the detected rotation angle of the image in degrees.
 func GetImageAngle(result uintptr) float32 {
 	var angle float32
 	proc := oneocr.NewProc("GetImageAngle")
@@ -117,6 +128,7 @@ func GetImageAngle(result uintptr) float32 {
 	return angle
 }
 
+// GetOcrLineCount returns the number of text lines detected in the image.
 func GetOcrLineCount(result uintptr) int {
 	var count int
 	proc := oneocr.NewProc("GetOcrLineCount")
@@ -127,6 +139,7 @@ func GetOcrLineCount(result uintptr) int {
 	return count
 }
 
+// GetOcrLine returns a handle to the specified text line by index.
 func GetOcrLine(result uintptr, index int) uintptr {
 	var handle uintptr
 	proc := oneocr.NewProc("GetOcrLine")
@@ -138,6 +151,7 @@ func GetOcrLine(result uintptr, index int) uintptr {
 	return handle
 }
 
+// GetOcrLineBoundingBox returns the bounding box coordinates for the specified text line.
 func GetOcrLineBoundingBox(line uintptr) BoundingBox {
 	var box *BoundingBox
 	proc := oneocr.NewProc("GetOcrLineBoundingBox")
@@ -148,6 +162,7 @@ func GetOcrLineBoundingBox(line uintptr) BoundingBox {
 	return *box
 }
 
+// GetOcrLineContent returns the text content of the specified line.
 func GetOcrLineContent(line uintptr) string {
 	var ptr *byte
 	proc := oneocr.NewProc("GetOcrLineContent")
@@ -160,6 +175,7 @@ func GetOcrLineContent(line uintptr) string {
 
 // TODO: GetOcrLineStyle
 
+// GetOcrLineWordCount returns the number of words in the specified text line.
 func GetOcrLineWordCount(line uintptr) int {
 	var count int
 	proc := oneocr.NewProc("GetOcrLineWordCount")
@@ -170,6 +186,7 @@ func GetOcrLineWordCount(line uintptr) int {
 	return count
 }
 
+// GetOcrWord returns a handle to the specified word by index within a text line.
 func GetOcrWord(line uintptr, index int) uintptr {
 	var handle uintptr
 	proc := oneocr.NewProc("GetOcrWord")
@@ -181,6 +198,7 @@ func GetOcrWord(line uintptr, index int) uintptr {
 	return handle
 }
 
+// GetOcrWordBoundingBox returns the bounding box coordinates for the specified word.
 func GetOcrWordBoundingBox(word uintptr) BoundingBox {
 	var box *BoundingBox
 	proc := oneocr.NewProc("GetOcrWordBoundingBox")
@@ -191,6 +209,7 @@ func GetOcrWordBoundingBox(word uintptr) BoundingBox {
 	return *box
 }
 
+// GetOcrWordContent returns the text content of the specified word.
 func GetOcrWordContent(word uintptr) string {
 	var ptr *byte
 	proc := oneocr.NewProc("GetOcrWordContent")
@@ -201,6 +220,7 @@ func GetOcrWordContent(word uintptr) string {
 	return ansi2String(ptr)
 }
 
+// GetOcrWordConfidence returns the recognition confidence score (0-1) for the specified word.
 func GetOcrWordConfidence(word uintptr) float32 {
 	var confidence float32
 	proc := oneocr.NewProc("GetOcrWordConfidence")
@@ -211,21 +231,29 @@ func GetOcrWordConfidence(word uintptr) float32 {
 	return confidence
 }
 
+// ReleaseOcrInitOptions releases the resources associated with OCR initialization options.
+// This should be called when the options are no longer needed.
 func ReleaseOcrInitOptions(initOpts uintptr) {
 	proc := oneocr.NewProc("ReleaseOcrInitOptions")
 	proc.Call(initOpts)
 }
 
+// ReleaseOcrPipeline releases the resources associated with an OCR pipeline.
+// This should be called when the pipeline is no longer needed.
 func ReleaseOcrPipeline(pipeline uintptr) {
 	proc := oneocr.NewProc("ReleaseOcrPipeline")
 	proc.Call(pipeline)
 }
 
+// ReleaseOcrProcessOptions releases the resources associated with OCR processing options.
+// This should be called when the options are no longer needed.
 func ReleaseOcrProcessOptions(processOpts uintptr) {
 	proc := oneocr.NewProc("ReleaseOcrProcessOptions")
 	proc.Call(processOpts)
 }
 
+// ReleaseOcrResult releases the resources associated with OCR recognition results.
+// This should be called when the results are no longer needed.
 func ReleaseOcrResult(result uintptr) {
 	proc := oneocr.NewProc("ReleaseOcrResult")
 	proc.Call(result)

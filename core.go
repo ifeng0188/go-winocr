@@ -19,6 +19,9 @@ var (
 	oneocrOnce sync.Once
 )
 
+// SetOcrDllPath sets the directory path containing the required OCR DLL and model files.
+// This must be called before any other OCR operations.
+// It will panic if any required files are missing.
 func SetOcrDllPath(path string) {
 	validateOcrDllPath(path)
 	oneocrOnce.Do(func() {
@@ -31,6 +34,7 @@ func SetOcrDllPath(path string) {
 	})
 }
 
+// GetOcrDllPath returns the current directory path containing OCR DLL and model files.
 func GetOcrDllPath() string {
 	return ocrPath
 }

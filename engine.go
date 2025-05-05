@@ -8,11 +8,13 @@ import (
 	"strings"
 )
 
+// OcrEngine represents the OCR engine instance that performs text recognition.
 type OcrEngine struct {
 	initOpts    uintptr
 	processOpts uintptr
 }
 
+// NewOcrEngine creates a new instance of the OCR engine with default settings.
 func NewOcrEngine() *OcrEngine {
 	e := &OcrEngine{
 		initOpts:    CreateOcrInitOptions(),
@@ -21,29 +23,37 @@ func NewOcrEngine() *OcrEngine {
 	return e
 }
 
+// EnableModelDelayLoad enables lazy loading of the OCR model.
 func (e *OcrEngine) EnableModelDelayLoad() error {
 	OcrInitOptionsSetUseModelDelayLoad(e.initOpts, true)
 	return nil
 }
 
+// GetMaxRecognitionLineCount returns the maximum number of text lines
 func (e *OcrEngine) GetMaxRecognitionLineCount() int {
 	return OcrProcessOptionsGetMaxRecognitionLineCount(e.processOpts)
 }
 
+// SetMaxRecognitionLineCount sets the maximum number of text lines
 func (e *OcrEngine) SetMaxRecognitionLineCount(count int) error {
 	OcrProcessOptionsSetMaxRecognitionLineCount(e.processOpts, count)
 	return nil
 }
 
+// GetResizeResolution returns the current resolution settings used for image resizing
 func (e *OcrEngine) GetResizeResolution() (int, int) {
 	return OcrProcessOptionsGetResizeResolution(e.processOpts)
 }
 
+// SetResizeResolution sets the resolution that images will be resized to
 func (e *OcrEngine) SetResizeResolution(width, height int) error {
 	OcrProcessOptionsSetResizeResolution(e.processOpts, width, height)
 	return nil
 }
 
+// Recognize performs OCR on the provided image and returns the results.
+// The format parameter can be either "text" for plain text output or "json" for
+// detailed recognition results including bounding boxes and confidence scores.
 func (e *OcrEngine) Recognize(img image.Image, format string) (string, error) {
 	bounds := img.Bounds()
 	width, height := bounds.Dx(), bounds.Dy()
@@ -77,6 +87,8 @@ func (e *OcrEngine) Recognize(img image.Image, format string) (string, error) {
 	return resultFormat, nil
 }
 
+// Close releases all resources associated with the OCR engine.
+// This should be called when the engine is no longer needed.
 func (e *OcrEngine) Close() {
 	ReleaseOcrProcessOptions(e.processOpts)
 	ReleaseOcrInitOptions(e.initOpts)
